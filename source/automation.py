@@ -33,68 +33,101 @@ def searchChildren(self, controls, depth=0, path=[0]):
 
 class SibeliusUIAutomation():
 
-    def __init__(self):
+    def __init__(self, parent=None):
 
-        staff_size = 7.2
-        staff_margin = 25
-        show_instrument = False
-        show_instrument_margin = 3
-        fullnames_margin = show_instrument_margin + 6
-        shortnames_margin = show_instrument_margin + 6
+        self.parent = parent
+        self.stop = False
+        self.staff_size = 7.2
+        self.staves = 10
+        self.staff_margin = 25
+        self.systems = self.staff_margin
+        self.show_instrument = False
+        self.show_instrument_margin = 3
+        self.extra_spaces = 3
+        self.page_margin = 14
+        names_margin = int(self.staff_size * 1.9 + self.show_instrument_margin - 2)
+        self.fullnames_margin = names_margin
+        self.shortnames_margin = names_margin
+        self.nonames_margin = 0
+        self.auto_break_bars = 4
 
         self.mouse = sibtool.mouse()
         self.root = sibtool.control(uiautomation).get('WindowControl', includes=['- Sibelius'])
+        # self.runall()
+
+    def runall(self, event=None):
         self.hidePanels()
         self.setViewDocumentViewSinglePagesVertically()
         self.setViewInvisibles()
-        self.setAppearanceInstrumentNames(show_instrument=show_instrument,
-                                          show_instrument_margin=show_instrument_margin)
+        self.setAppearanceInstrumentNames()
         self.setTextNumberingPageNumberChange()
         self.setTextNumberingEverySystem()
         self.setLayoutFormatUnlock()
-        self.setLayoutDocumentSetup(staff_size=staff_size,
-                                    staff_margin=staff_margin,
-                                    fullnames_margin=fullnames_margin,
-                                    shortnames_margin=shortnames_margin)
-        self.setLayoutStaffSpacing(staves=10, systems=staff_margin)
+        self.setLayoutDocumentSetup()
+        self.setLayoutStaffSpacing(staves=self.staves, systems=self.staff_margin)
         self.setLayoutStaffSpacingOptimize()
-        self.setLayoutAutoBreak(4)
+        self.setLayoutAutoBreak()
         self.setAppearanceResetNotesResetNoteSpacing()
         self.removeTitle()
         self.exportGraphicAsSVG()
 
-    def hidePanels(self):
+    def setLayout(self, event=None):
+        self.setAppearanceInstrumentNames()
+        self.setLayoutDocumentSetup()
+        self.setLayoutStaffSpacing()
+        self.setLayoutStaffSpacingOptimize()
+
+    def hidePanels(self, event=None):
         self.root.key.esc()
         self.root.key.bulk(['{CTRL}{ALT}X'])
         # self.root.key.menu(['{ALT}|V|PN|HP'])
 
-    def setLayoutStaffSpacing(self, staves=10, systems=20, extra_spaces=3):
+    def setLayoutStaffSpacing(self, event=None):
         self.root.key.esc()
         self.root.key.menu(['{ALT}|L|SE'])
         modal = sibtool.control(self.root).get('WindowControl', name='Engraving Rules')
         modal.key.bulk(['{TAB}{TAB}{TAB}%0.2f{TAB}%0.2f{TAB}%0.2f{TAB}%0.2f{TAB}%0.2f' %
-                        (staves, extra_spaces, extra_spaces, extra_spaces, systems)])
+                        (self.staves, self.extra_spaces, self.extra_spaces, self.extra_spaces, self.systems)])
         modal.key.bulk(['{ENTER}'])
 
-    def setLayoutStaffSpacingOptimize(self):
+    def setLayoutStaffSpacingOptimize(self, event=None):
         self.root.key.esc()
         self.root.key.send(['{CTRL}A'])
-        self.root.key.menu(['{ALT}|L|OS'])
+        self.wait(150)
         self.root.key.menu(['{ALT}|L|RB'])
         self.root.key.menu(['{ALT}|L|RA'])
+        self.root.key.menu(['{ALT}|L|OS'])
         self.root.key.esc()
         # self.root.key.send(['{CTRL}{ALT}{Shift}.'], wait=200)
         # self.root.key.send(['{CTRL}{ALT}{Shift},'], wait=200)
         # self.root.key.send(['{CTRL}{ALT}{Shift}/'], wait=200)
 
-    def setAppearanceResetNotesResetNoteSpacing(self):
+    def setLayoutDocumentSetup(self, event=None):
+        self.root.key.esc()
+        self.root.key.bulk(['{CTRL}D'])
+        # self.root.key.menu(['{ALT}|L|DS'])
+        modal = sibtool.control(self.root).get('WindowControl', name='Document Setup')
+        sibtool.control(modal).get('CheckBoxControl', name='After first page:').set_checkbox(True)
+        modal.key.bulk(['{ALT}M{TAB}{HOME}{DOWN}{DOWN}{DOWN}{DOWN}'])
+        modal.key.menu(['{ALT}O'])
+        modal.key.bulk(['{TAB}{TAB}{TAB}%0.2f' % (self.staff_size)])
+        modal.key.menu(['{ALT}A'])
+        modal.key.bulk(['{TAB}%0.2f{TAB}%0.2f{TAB}%0.2f{TAB}%0.2f' %
+                        (self.page_margin, self.page_margin, self.page_margin, self.page_margin)])
+        modal.key.bulk(['{TAB}%0.2f{TAB}%0.2f{TAB}%0.2f{TAB}%0.2f{TAB}%0.2f' %
+                        (self.staff_margin, self.fullnames_margin,
+                            self.shortnames_margin, self.nonames_margin, self.staff_margin)])
+        modal.key.bulk(['{TAB}{TAB}%0.2f{TAB}%0.2f' % (self.staff_margin, self.staff_margin)])
+        modal.key.bulk(['{Enter}'])
+
+    def setAppearanceResetNotesResetNoteSpacing(self, event=None):
         self.root.key.esc()
         self.root.key.send(['{CTRL}A'])
         self.root.key.menu(['{ALT}|A|RN'])
         self.root.key.esc()
         # self.root.key.send(['{CTRL}{ALT}{Shift}N'], wait=200)
 
-    def removeTitle(self):
+    def removeTitle(self, event=None):
 
         def set_layout():
             self.root.key.menu(['{ALT}|V|FP'])
@@ -187,14 +220,15 @@ class SibeliusUIAutomation():
         modal = get_position_composer_modal()
         modal.key.bulk(['%s{TAB}%s' % (composer_margin, composer_margin)])
         modal.key.bulk(['{ENTER}'])
+        # return True
 
-    def setViewDocumentViewSinglePagesVertically(self):
+    def setViewDocumentViewSinglePagesVertically(self, event=None):
         self.root.key.esc()
         self.root.key.menu(['{ALT}|V|PV'])
         self.root.key.menu(['{ALT}|V|FP'])
         self.root.key.bulk(['{CTRL}{HOME}|{CTRL}{PAGEUP}'])
 
-    def setTextNumberingPageNumberChange(self):
+    def setTextNumberingPageNumberChange(self, event=None):
         self.root.key.esc()
         self.root.key.send(['{CTRL}A'])
         self.root.key.menu(['{ALT}|T|PN'])
@@ -207,37 +241,18 @@ class SibeliusUIAutomation():
         modal.key.bulk(['Y'])
         self.root.key.esc()
 
-    def setTextNumberingEverySystem(self):
+    def setTextNumberingEverySystem(self, event=None):
         self.root.key.esc()
         self.root.key.menu(['{ALT}|T|ES'])
 
-    def setLayoutFormatUnlock(self):
+    def setLayoutFormatUnlock(self, event=None):
         self.root.key.esc()
         self.root.key.send(['{CTRL}A'])
         self.root.key.bulk(['{CTRL}{SHIFT}U'])
         # self.root.key.menu(['{ALT}|L|UF'])
         self.root.key.esc()
 
-    def setLayoutDocumentSetup(self, margin=14, staff_size=7.2, staff_margin=20,
-                               fullnames_margin=8, shortnames_margin=8, nonames_margin=0):
-
-        self.root.key.esc()
-        self.root.key.bulk(['{CTRL}D'])
-        # self.root.key.menu(['{ALT}|L|DS'])
-        modal = sibtool.control(self.root).get('WindowControl', name='Document Setup')
-        sibtool.control(modal).get('CheckBoxControl', name='After first page:').set_checkbox(True)
-        modal.key.bulk(['{ALT}M{TAB}{HOME}{DOWN}{DOWN}{DOWN}{DOWN}'])
-        modal.key.send(['{ALT}O'])
-        modal.key.bulk(['{TAB}{TAB}{TAB}%0.2f' % (staff_size)])
-        modal.key.send(['{ALT}A'])
-        modal.key.bulk(['{TAB}%0.2f{TAB}%0.2f{TAB}%0.2f{TAB}%0.2f' %
-                        (margin, margin, margin, margin)])
-        modal.key.bulk(['{TAB}%0.2f{TAB}%0.2f{TAB}%0.2f{TAB}%0.2f{TAB}%0.2f' %
-                        (staff_margin, fullnames_margin, shortnames_margin, nonames_margin, staff_margin)])
-        modal.key.bulk(['{TAB}{TAB}%0.2f{TAB}%0.2f' % (staff_margin, staff_margin)])
-        modal.key.bulk(['{Enter}'])
-
-    def setLayoutAutoBreak(self, bars):
+    def setLayoutAutoBreak(self, event=None):
         self.root.key.esc()
         self.root.key.send(['{CTRL}A'])
         self.root.key.menu(['{ALT}|L|AB'])
@@ -245,23 +260,25 @@ class SibeliusUIAutomation():
         sibtool.control(modal).get('CheckBoxControl', name='Use auto system breaks').set_checkbox(True)
         sibtool.control(modal).get('CheckBoxControl', name='Use multirests').set_checkbox(False)
         sibtool.control(modal).get('CheckBoxControl', name='Use auto page breaks').set_checkbox(False)
-        modal.key.bulk(['{TAB}{SPACE}{TAB}%d' % (bars)])
+        modal.key.bulk(['{TAB}{SPACE}{TAB}%d' % (self.auto_break_bars)])
         modal.key.bulk(['{Enter}'])
         self.root.key.esc()
         self.root.key.bulk(['{CTRL}{HOME}|{CTRL}{PAGEUP}'])
 
-    def setViewInvisibles(self):
+    def setViewInvisibles(self, event=None):
         self.root.key.esc()
         self.root.key.menu(['{ALT}|V'])
         self.root.key.esc()
         sibtool.control(self.root).filter('CheckBoxControl', includes=[
             'Invisibles group']).set_checkbox(False)
         sibtool.control(self.root).get('CheckBoxControl', includes=[
-            'Invisibles group', 'Displays hidden objects in light gray']).set_checkbox(True)
+            'Invisibles group', 'Page Margins']).set_checkbox(True)
+        sibtool.control(self.root).get('CheckBoxControl', includes=[
+            'Invisibles group', 'Hidden Objects']).set_checkbox(True)
 
-    def setAppearanceInstrumentNames(self, show_instrument=False, show_instrument_margin=3):
-        value = '{HOME}' if show_instrument else '{END}'
-        show_instrument_margin = show_instrument_margin if show_instrument else 0
+    def setAppearanceInstrumentNames(self, event=None):
+        value = '{HOME}' if self.show_instrument else '{END}'
+        show_instrument_margin = self.show_instrument_margin if self.show_instrument else 0
         self.root.key.esc()
         self.root.key.menu(['{ALT}|A|IE'])
         modal = sibtool.control(self.root).get('WindowControl', name='Engraving Rules')
@@ -304,7 +321,7 @@ class SibeliusUIAutomation():
     #                    '{Esc}|{CTRL}a|{ALT}|l|ra',
     #                    '{Esc}|{CTRL}a|{ALT}|l|os'])
 
-    def exportGraphicAsSVG(self):
+    def exportGraphicAsSVG(self, event=None):
         self.root.key.esc()
         self.root.key.menu(['{ALT}|F|E|GR|GF'])
         self.root.key.bulk(['{End}|{Enter}'])
@@ -323,13 +340,19 @@ class SibeliusUIAutomation():
 
         self.wait(100)
         self.root.key.menu(['{ALT}|E|O'])
+        # return True
+
+    def saveProjectFile(self, event=None):
+        self.root.key.esc()
+        self.root.key.menu(['{CTRL}S'])
+        return True
 
     def wait(self, wait):
         time.sleep(wait * 0.001)
 
 
 def main():
-    sibelius = SibeliusUIAutomation()
+    SibeliusUIAutomation()
 
 
 if __name__ == '__main__':
