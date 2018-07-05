@@ -10,6 +10,9 @@ email: peppy0510@hotmail.com
 import multiprocessing
 import queue
 import threading
+import win32api
+import win32con
+import win32gui
 import wx
 
 from automation import SibeliusUIAutomation
@@ -168,8 +171,14 @@ class MacroProcessor(wx.Timer):
         self.Start(self.interval)
         self.total_count = len(self.parent.macros)
         self.uiautomation = self.parent.parent.GetUIAutomation()
+        flags, hcursor, (x, y) = win32gui.GetCursorInfo()
+        self.x = x
+        self.y = y
+        # win32api.SetCursorPos((int(x), int(y)))
 
     def Notify(self):
+
+        # win32api.SetCursorPos((int(self.x), int(self.y)))
 
         if self.thread and not self.thread.isAlive():
             self.thread = None
@@ -217,47 +226,64 @@ class MacroProcessor(wx.Timer):
             if name == 'saveProjectFile':
                 label = 'Save Project'
 
-            self.parent.Message.SetLabel('%s (%d/%d)' % (
+            self.parent.DynamicMessage.SetLabel('%s (%d/%d)' % (
                 label, self.total_count - len(self.parent.macros), self.total_count))
 
 
 class MacroProcessingDialog(wx.Dialog):
 
     def __init__(self, parent, macros, *args, **kwargs):
-        # wx.Dialog.__init__(self, parent, *args, **kwargs, style=wx.CLOSE_BOX | wx.STAY_ON_TOP | wx.DIALOG_NO_PARENT)
         wx.Dialog.__init__(self, parent, *args, **kwargs, style=wx.CLOSE_BOX | wx.STAY_ON_TOP)
         self.parent = parent
         self.macros = macros
         self.stop = False
-        width, height = (205, 135)
+        width, height = (230, 135)
         x, y, w, h = self.parent.GetScreenRect()
         x, y = (x + (w - width) / 2, y + (h - height) / 2)
         self.SetRect((x, y, width, height))
-        self.SetTitle('Processing Macro')
-
-        margin = 12
+        # self.SetTitle('Processing Macro')
+        page_margin = 12
+        line_margin = 2
         width, height = self.GetClientSize()
         message = 'Processing macro, please wait ...'
-        wx.StaticText(self, label=message, pos=(margin, margin))
+        StaticMessage = wx.StaticText(self, label=message, pos=(page_margin, page_margin))
 
-        self.Message = wx.StaticText(self, label='', pos=(margin, margin + 20))
+        x, y, width, height = StaticMessage.GetRect()
+        message = 'You can cancel with [BREAK] key.'
+        StaticMessage = wx.StaticText(self, label=message, pos=(page_margin, y + height + line_margin))
 
-        # wx.StaticText(self, label=message, pos=(margin, margin + 18 * 2))
+        x, y, width, height = StaticMessage.GetRect()
+        self.DynamicMessage = wx.StaticText(self, label='', pos=(page_margin, y + height + line_margin))
 
-        # self.CancelButton = wx.Button(self, label=u'Cancel')
-        # self.CancelButton.SetRect((width - (78 + margin) * 1, margin + 60, 78, 24))
-        # self.CancelButton.Bind(wx.EVT_BUTTON, self.OnCancelButton)
-        # x, y = self.CancelButton.GetPosition()
-
-        x, y = self.Message.GetPosition()
-
-        self.SetClientSize((self.GetClientSize().x, y + 30))
+        x, y, width, height = self.DynamicMessage.GetRect()
+        self.SetClientSize((self.GetClientSize().x, y + height + line_margin + page_margin))
         self.processor = MacroProcessor(self)
         self.Bind(wx.EVT_CLOSE, self.OnCancelButton)
+
+        newId = wx.NewId()
+        self.RegisterHotKey(newId, win32con.VK_F1, win32con.VK_PAUSE)
+        # self.RegisterHotKey(newId, win32con.VK_F1, win32con.VK_F5)
+        self.Bind(wx.EVT_HOTKEY, self.OnHotKeyPressed, id=newId)
+        self.SetFocus()
+
+        # self.myCursor = wx.Cursor(wx.CURSOR_WAIT)
+        cursor = wx.Cursor(wx.CURSOR_NO_ENTRY)
+        self.SetCursor(cursor)
+        # self.parent.SetCursor(cursor)
+
+        # self.myCursor = wx.StockCursor(wx.CURSOR_WAIT)
+        # wx.CURSOR_ARROW
+
         self.ShowModal()
 
+    def OnHotKeyPressed(self, event):
+        if not self.stop:
+            self.stop = True
+            self.OnCancelButton()
+
     def OnCancelButton(self, event=None):
-        print('OnCancelButton')
+        message = self.DynamicMessage.GetLabel()
+        self.DynamicMessage.SetLabel('Cancel ' + message)
         self.processor.macros = []
         if self.processor is not None and self.processor.thread is not None:
             self.processor.thread_stop_queue.put(True)
@@ -269,30 +295,7 @@ class MacroProcessingDialog(wx.Dialog):
 class MacroProcessing():
 
     def ShowProcessingDialog(self, processors):
-
-        # width, height = (250, 135)
-        # x, y, w, h = self.GetScreenRect()
-        # x, y = (x + (w - width) / 2, y + (h - height) / 2)
         self.Dialog = MacroProcessingDialog(self, processors)
-        # self.Dialog.SetRect((x, y, width, height))
-        # self.Dialog.SetTitle('About')
-
-        # margin = 12
-        # width, height = self.Dialog.GetClientSize()
-        # message = 'SibeliusMacro %s' % (self.version)
-        # wx.StaticText(self.Dialog, label=message, pos=(margin, margin))
-        # message = 'Author: %s' % (self.author_name)
-        # wx.StaticText(self.Dialog, label=message, pos=(margin, margin + 18))
-        # message = 'Email: %s' % (self.author_email)
-        # wx.StaticText(self.Dialog, label=message, pos=(margin, margin + 18 * 2))
-
-        # self.Dialog.CancelButton = wx.Button(self.Dialog, label=u'Cancel')
-        # self.Dialog.CancelButton.SetRect((width - (78 + margin) * 1, margin + 60, 78, 24))
-        # self.Dialog.CancelButton.Bind(wx.EVT_BUTTON, self.HideProcessingDialog)
-
-        # x, y = self.Dialog.CancelButton.GetPosition()
-        # self.Dialog.SetClientSize((self.Dialog.GetClientSize().x, y + 35))
-        # self.Dialog.ShowModal()
 
     def HideProcessingDialog(self, event=None):
         self.Dialog.OnCancelButton()
@@ -319,10 +322,6 @@ class MacroToggleHandlers():
     def OnMeasureNumbersToggle(self, event=None):
         self.MacroPresetComboBox.SetValue('')
         self.HandleToggleEventSelectAllButton(event)
-
-    # def OnInstrumentNamesToggle(self, event=None):
-    #     self.MacroPresetComboBox.SetValue('')
-    #     self.HandleToggleEventSelectAllButton(event)
 
     def OnLayoutToggle(self, event=None):
         self.MacroPresetComboBox.SetValue('')

@@ -7,9 +7,7 @@ email: peppy0510@hotmail.com
 '''
 
 
-import os
 import wx
-from mpath import mpath
 
 
 class StatusWatcher(wx.Timer):
@@ -22,6 +20,7 @@ class StatusWatcher(wx.Timer):
         self.Start(self.interval)
 
     def Notify(self):
+
         return
         # if hasattr(self.parent, 'parent') is False:
         #     return

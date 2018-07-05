@@ -31,101 +31,7 @@ def searchChildren(self, controls, depth=0, path=[0]):
     return response
 
 
-class SibeliusUIAutomation():
-
-    def __init__(self, parent=None):
-
-        self.parent = parent
-        self.stop = False
-        self.staff_size = 7.2
-        self.staves = 10
-        self.staff_margin = 25
-        self.systems = self.staff_margin
-        self.show_instrument = False
-        self.show_instrument_margin = 3
-        self.extra_spaces = 3
-        self.page_margin = 14
-        names_margin = int(self.staff_size * 1.9 + self.show_instrument_margin - 2)
-        self.fullnames_margin = names_margin
-        self.shortnames_margin = names_margin
-        self.nonames_margin = 0
-        self.auto_break_bars = 4
-
-        self.mouse = sibtool.mouse()
-        self.root = sibtool.control(uiautomation).get('WindowControl', includes=['- Sibelius'])
-        # self.runall()
-
-    def runall(self, event=None):
-        self.hidePanels()
-        self.setViewDocumentViewSinglePagesVertically()
-        self.setViewInvisibles()
-        self.setAppearanceInstrumentNames()
-        self.setTextNumberingPageNumberChange()
-        self.setTextNumberingEverySystem()
-        self.setLayoutFormatUnlock()
-        self.setLayoutDocumentSetup()
-        self.setLayoutStaffSpacing(staves=self.staves, systems=self.staff_margin)
-        self.setLayoutStaffSpacingOptimize()
-        self.setLayoutAutoBreak()
-        self.setAppearanceResetNotesResetNoteSpacing()
-        self.removeTitle()
-        self.exportGraphicAsSVG()
-
-    def setLayout(self, event=None):
-        self.setAppearanceInstrumentNames()
-        self.setLayoutDocumentSetup()
-        self.setLayoutStaffSpacing()
-        self.setLayoutStaffSpacingOptimize()
-
-    def hidePanels(self, event=None):
-        self.root.key.esc()
-        self.root.key.bulk(['{CTRL}{ALT}X'])
-        # self.root.key.menu(['{ALT}|V|PN|HP'])
-
-    def setLayoutStaffSpacing(self, event=None):
-        self.root.key.esc()
-        self.root.key.menu(['{ALT}|L|SE'])
-        modal = sibtool.control(self.root).get('WindowControl', name='Engraving Rules')
-        modal.key.bulk(['{TAB}{TAB}{TAB}%0.2f{TAB}%0.2f{TAB}%0.2f{TAB}%0.2f{TAB}%0.2f' %
-                        (self.staves, self.extra_spaces, self.extra_spaces, self.extra_spaces, self.systems)])
-        modal.key.bulk(['{ENTER}'])
-
-    def setLayoutStaffSpacingOptimize(self, event=None):
-        self.root.key.esc()
-        self.root.key.send(['{CTRL}A'])
-        self.wait(150)
-        self.root.key.menu(['{ALT}|L|RB'])
-        self.root.key.menu(['{ALT}|L|RA'])
-        self.root.key.menu(['{ALT}|L|OS'])
-        self.root.key.esc()
-        # self.root.key.send(['{CTRL}{ALT}{Shift}.'], wait=200)
-        # self.root.key.send(['{CTRL}{ALT}{Shift},'], wait=200)
-        # self.root.key.send(['{CTRL}{ALT}{Shift}/'], wait=200)
-
-    def setLayoutDocumentSetup(self, event=None):
-        self.root.key.esc()
-        self.root.key.bulk(['{CTRL}D'])
-        # self.root.key.menu(['{ALT}|L|DS'])
-        modal = sibtool.control(self.root).get('WindowControl', name='Document Setup')
-        sibtool.control(modal).get('CheckBoxControl', name='After first page:').set_checkbox(True)
-        modal.key.bulk(['{ALT}M{TAB}{HOME}{DOWN}{DOWN}{DOWN}{DOWN}'])
-        modal.key.menu(['{ALT}O'])
-        modal.key.bulk(['{TAB}{TAB}{TAB}%0.2f' % (self.staff_size)])
-        modal.key.menu(['{ALT}A'])
-        modal.key.bulk(['{TAB}%0.2f{TAB}%0.2f{TAB}%0.2f{TAB}%0.2f' %
-                        (self.page_margin, self.page_margin, self.page_margin, self.page_margin)])
-        modal.key.bulk(['{TAB}%0.2f{TAB}%0.2f{TAB}%0.2f{TAB}%0.2f{TAB}%0.2f' %
-                        (self.staff_margin, self.fullnames_margin,
-                            self.shortnames_margin, self.nonames_margin, self.staff_margin)])
-        modal.key.bulk(['{TAB}{TAB}%0.2f{TAB}%0.2f' % (self.staff_margin, self.staff_margin)])
-        modal.key.bulk(['{Enter}'])
-
-    def setAppearanceResetNotesResetNoteSpacing(self, event=None):
-        self.root.key.esc()
-        self.root.key.send(['{CTRL}A'])
-        self.root.key.menu(['{ALT}|A|RN'])
-        self.root.key.esc()
-        # self.root.key.send(['{CTRL}{ALT}{Shift}N'], wait=200)
+class SibeliusRemoveTitle():
 
     def removeTitle(self, event=None):
 
@@ -221,6 +127,105 @@ class SibeliusUIAutomation():
         modal.key.bulk(['%s{TAB}%s' % (composer_margin, composer_margin)])
         modal.key.bulk(['{ENTER}'])
         # return True
+
+
+class SibeliusLayoutDocumentSetup():
+
+    def hidePanels(self, event=None):
+        self.root.key.esc()
+        self.root.key.bulk(['{CTRL}{ALT}X'])
+        # self.root.key.menu(['{ALT}|V|PN|HP'])
+
+    def setLayoutStaffSpacing(self, event=None):
+        self.root.key.esc()
+        self.root.key.menu(['{ALT}|L|SE'])
+        modal = sibtool.control(self.root).get('WindowControl', name='Engraving Rules')
+        modal.key.bulk(['{TAB}{TAB}{TAB}%0.2f{TAB}%0.2f{TAB}%0.2f{TAB}%0.2f{TAB}%0.2f' %
+                        (self.staves, self.extra_spaces, self.extra_spaces, self.extra_spaces, self.systems)])
+        modal.key.bulk(['{ENTER}'])
+
+    def setLayoutStaffSpacingOptimize(self, event=None):
+        self.root.key.esc()
+        self.root.key.send(['{CTRL}A'])
+        self.wait(150)
+        self.root.key.menu(['{ALT}|L|RB'])
+        self.root.key.menu(['{ALT}|L|RA'])
+        self.root.key.menu(['{ALT}|L|OS'])
+        self.root.key.esc()
+        # self.root.key.send(['{CTRL}{ALT}{Shift}.'], wait=200)
+        # self.root.key.send(['{CTRL}{ALT}{Shift},'], wait=200)
+        # self.root.key.send(['{CTRL}{ALT}{Shift}/'], wait=200)
+
+    def setLayoutDocumentSetup(self, event=None):
+        self.root.key.esc()
+        self.root.key.bulk(['{CTRL}D'])
+        # self.root.key.menu(['{ALT}|L|DS'])
+        modal = sibtool.control(self.root).get('WindowControl', name='Document Setup')
+        sibtool.control(modal).get('CheckBoxControl', name='After first page:').set_checkbox(True)
+        modal.key.bulk(['{ALT}M{TAB}{HOME}{DOWN}{DOWN}{DOWN}{DOWN}'])
+        modal.key.menu(['{ALT}O'])
+        modal.key.bulk(['{TAB}{TAB}{TAB}%0.2f' % (self.staff_size)])
+        modal.key.menu(['{ALT}A'])
+        modal.key.bulk(['{TAB}%0.2f{TAB}%0.2f{TAB}%0.2f{TAB}%0.2f' %
+                        (self.page_margin, self.page_margin, self.page_margin, self.page_margin)])
+        modal.key.bulk(['{TAB}%0.2f{TAB}%0.2f{TAB}%0.2f{TAB}%0.2f{TAB}%0.2f' %
+                        (self.staff_margin, self.fullnames_margin,
+                            self.shortnames_margin, self.nonames_margin, self.staff_margin)])
+        modal.key.bulk(['{TAB}{TAB}%0.2f{TAB}%0.2f' % (self.staff_margin, self.staff_margin)])
+        modal.key.bulk(['{Enter}'])
+
+
+class SibeliusUIAutomation(SibeliusLayoutDocumentSetup):
+
+    def __init__(self, parent=None):
+
+        self.parent = parent
+        self.stop = False
+        self.staff_size = 7.2
+        self.staves = 10
+        self.staff_margin = 25
+        self.systems = self.staff_margin
+        self.show_instrument = False
+        self.show_instrument_margin = 3
+        self.extra_spaces = 3
+        self.page_margin = 14
+        names_margin = int(self.staff_size * 1.9 + self.show_instrument_margin - 2)
+        self.fullnames_margin = names_margin
+        self.shortnames_margin = names_margin
+        self.nonames_margin = 0
+        self.auto_break_bars = 4
+        self.mouse = sibtool.mouse()
+        self.root = sibtool.control(uiautomation).get('WindowControl', includes=['- Sibelius'])
+        # self.runall()
+
+    def runall(self, event=None):
+        self.hidePanels()
+        self.setViewDocumentViewSinglePagesVertically()
+        self.setViewInvisibles()
+        self.setAppearanceInstrumentNames()
+        self.setTextNumberingPageNumberChange()
+        self.setTextNumberingEverySystem()
+        self.setLayoutFormatUnlock()
+        self.setLayoutDocumentSetup()
+        self.setLayoutStaffSpacing(staves=self.staves, systems=self.staff_margin)
+        self.setLayoutStaffSpacingOptimize()
+        self.setLayoutAutoBreak()
+        self.setAppearanceResetNotesResetNoteSpacing()
+        self.removeTitle()
+        self.exportGraphicAsSVG()
+
+    def setLayout(self, event=None):
+        self.setAppearanceInstrumentNames()
+        self.setLayoutDocumentSetup()
+        self.setLayoutStaffSpacing()
+        self.setLayoutStaffSpacingOptimize()
+
+    def setAppearanceResetNotesResetNoteSpacing(self, event=None):
+        self.root.key.esc()
+        self.root.key.send(['{CTRL}A'])
+        self.root.key.menu(['{ALT}|A|RN'])
+        self.root.key.esc()
+        # self.root.key.send(['{CTRL}{ALT}{Shift}N'], wait=200)
 
     def setViewDocumentViewSinglePagesVertically(self, event=None):
         self.root.key.esc()
