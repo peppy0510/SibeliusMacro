@@ -13,46 +13,14 @@ import sys
 import wx
 
 
-class AppPreference(object):
+class AppPreferenceBase():
 
     def __init__(self, parent, dirname, filename):
         self.parent = parent
-        # self.value = dtruct()
         self.value = {}
         self.dirname = dirname
         self.filename = filename
-        self.path = self.get_preference_path(dirname, filename)
-
-    def get_preference_path(self, dirname, filename):
-        '''
-        사용자 설정파일의 위치를 반환.
-        '''
-        abspath = os.path.join(self.get_user_document_path(), dirname)
-        if os.path.isdir(abspath) is False:
-            os.mkdir(abspath)
-        path = os.path.join(abspath, filename)
-        return path
-
-    def get_user_document_path(self):
-        '''
-        사용자 도큐먼트 디렉토리의 위치를 반환.
-        '''
-        if sys.platform.startswith('win'):
-            path = os.path.abspath(os.path.join(
-                os.path.expanduser(r'~'), r'Documents'))
-            if os.path.isdir(path):
-                return path
-            path = os.path.abspath(os.path.join(
-                os.path.expanduser(r'~'), r'My Documents'))
-            if os.path.isdir(path):
-                return path
-            return None
-        elif sys.platform.startswith('darwin'):
-            path = os.path.abspath(os.path.join(
-                os.path.expanduser(r'~'), r'Documents'))
-            if os.path.isdir(path):
-                return path
-            return None
+        self.path = self._get_preference_path_(dirname, filename)
 
     def get(self, key, load=False):
         '''
@@ -92,20 +60,54 @@ class AppPreference(object):
         with open(self.path, 'w', encoding='utf-8') as file:
             file.write(json.dumps(self.value, sort_keys=True, indent=4))
 
+    def _get_preference_path_(self, dirname, filename):
+        '''
+        사용자 설정파일의 위치를 반환.
+        '''
+        abspath = os.path.join(self._get_user_document_path_(), dirname)
+        if os.path.isdir(abspath) is False:
+            os.mkdir(abspath)
+        path = os.path.join(abspath, filename)
+        return path
+
+    def _get_user_document_path_(self):
+        '''
+        사용자 도큐먼트 디렉토리의 위치를 반환.
+        '''
+        if sys.platform.startswith('win'):
+            path = os.path.abspath(os.path.join(
+                os.path.expanduser(r'~'), r'Documents'))
+            if os.path.isdir(path):
+                return path
+            path = os.path.abspath(os.path.join(
+                os.path.expanduser(r'~'), r'My Documents'))
+            if os.path.isdir(path):
+                return path
+            return None
+        elif sys.platform.startswith('darwin'):
+            path = os.path.abspath(os.path.join(
+                os.path.expanduser(r'~'), r'Documents'))
+            if os.path.isdir(path):
+                return path
+            return None
+
+
+class AppPreference(AppPreferenceBase):
+
     def SavePreference(self):
         '''
         모든 설정값을 사용자 설정파일에 저장.
         '''
         self.set('Rect', tuple(self.parent.GetRect()))
         self.set('AlwaysOnTopMenuItem', self.parent.AlwaysOnTopMenuItem.IsChecked())
-        self.set('AutoClearWhenImportMenuItem', self.parent.AutoClearWhenImportMenuItem.IsChecked())
-        self.set('AutoClearWhenBatchPrecessingMenuItem', self.parent.AutoClearWhenBatchPrecessingMenuItem.IsChecked())
-        self.set('MacroPresetComboBox', self.parent.MacroPresetComboBox.GetValue())
+        # self.set('AutoClearWhenImportMenuItem', self.parent.AutoClearWhenImportMenuItem.IsChecked())
+        # self.set('AutoClearWhenBatchPrecessingMenuItem', self.parent.AutoClearWhenBatchPrecessingMenuItem.IsChecked())
+        self.set('PresetComboBox', self.parent.ToolPanel.PresetComboBox.GetValue())
 
-        for macro in self.parent.MacroFunctions:
+        for macro in self.parent.ToolPanel.MacroFunctions:
             self.set(macro.name, macro.toggle.GetValue())
 
-        for macro in self.parent.MacroValues:
+        for macro in self.parent.ToolPanel.MacroValues:
             self.set(macro.name, macro.value.GetValue())
 
         self.save()
@@ -129,43 +131,32 @@ class AppPreference(object):
 
         value = self.get('AlwaysOnTopMenuItem')
         if value is not None:
-            if value is True:
-                self.parent.SetAlwaysOnTopEnabled()
-            else:
-                self.parent.SetAlwaysOnTopDisabled()
+            self.parent.ToolPanel.SetAlwaysOnTopValue(value)
 
-        value = self.get('AutoClearWhenImportMenuItem')
-        if value is not None:
-            self.parent.AutoClearWhenImportMenuItem.Check(value)
-
-        value = self.get('AutoClearWhenBatchPrecessingMenuItem')
-        if value is not None:
-            self.parent.AutoClearWhenBatchPrecessingMenuItem.Check(value)
-
-        value = self.get('MacroPresetComboBox')
-        if value is not None:
-            self.parent.MacroPresetComboBox.SetValue(value)
-
-        # value = self.get('InstrumentNamesShow')
+        # value = self.get('AutoClearWhenImportMenuItem')
         # if value is not None:
-        #     self.parent.InstrumentNamesShow.SetValue(value)
-        #     self.parent.InstrumentNamesHide.SetValue(not value)
+        #     self.parent.AutoClearWhenImportMenuItem.Check(value)
 
-        for macro in self.parent.MacroFunctions:
+        # value = self.get('AutoClearWhenBatchPrecessingMenuItem')
+        # if value is not None:
+        #     self.parent.AutoClearWhenBatchPrecessingMenuItem.Check(value)
+
+        value = self.get('PresetComboBox')
+        if value is not None:
+            self.parent.ToolPanel.PresetComboBox.SetValue(value)
+
+        for macro in self.parent.ToolPanel.MacroFunctions:
             macro.toggle.SetValue(False)
             if self.get(macro.name):
                 macro.toggle.SetValue(True)
 
-        for macro in self.parent.MacroValues:
+        for macro in self.parent.ToolPanel.MacroValues:
             value = self.get(macro.name)
             if value is not None:
                 macro.value.SetValue(float(value))
 
-        self.parent.SelectAllButton.SetLabel('Unselect All')
-        for macro in self.parent.MacroFunctions:
+        self.parent.ToolPanel.SelectAllButton.SetLabel('Unselect All')
+        for macro in self.parent.ToolPanel.MacroFunctions:
             if macro.name not in ('ExportSVG', 'SaveProject'):
                 if macro.toggle.GetValue() is False:
-                    self.parent.SelectAllButton.SetLabel('Select All')
-
-        # if event.IsChecked() is False:
-        #     self.SelectAllButton.SetLabel('Select All')
+                    self.parent.ToolPanel.SelectAllButton.SetLabel('Select All')

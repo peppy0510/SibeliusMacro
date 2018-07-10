@@ -7,8 +7,6 @@ email: peppy0510@hotmail.com
 '''
 
 
-import os
-import subprocess
 import wx
 
 
@@ -30,12 +28,13 @@ class MenuBar():
 
         MenuBar.Append(FileMenu, '&File')
         SettingsMenu = wx.Menu()
-        self.AlwaysOnTopMenuItem = make_menuitem('Always on top', SettingsMenu, self.OnAlwaysOnTopToggle)
-        SettingsMenu.AppendSeparator()
-        self.AutoClearWhenImportMenuItem = make_menuitem('Auto clear when import', SettingsMenu, None)
-        self.AutoClearWhenImportMenuItem.Check(True)
-        self.AutoClearWhenBatchPrecessingMenuItem = make_menuitem('Auto clear after batch processing', SettingsMenu, None)
-        self.AutoClearWhenBatchPrecessingMenuItem.Check(True)
+        self.AlwaysOnTopMenuItem = make_menuitem('Always on top', SettingsMenu, self.ToolPanel.OnAlwaysOnTopToggle)
+        # SettingsMenu.AppendSeparator()
+        # self.AutoClearWhenImportMenuItem = make_menuitem('Auto clear when import', SettingsMenu, None)
+        # self.AutoClearWhenImportMenuItem.Check(True)
+        # self.AutoClearWhenBatchPrecessingMenuItem = make_menuitem(
+        #     'Auto clear after batch processing', SettingsMenu, None)
+        # self.AutoClearWhenBatchPrecessingMenuItem.Check(True)
         MenuBar.Append(SettingsMenu, '&Settings')
 
         HelpMenu = wx.Menu()
@@ -68,12 +67,3 @@ class MenuBar():
         x, y = self.Dialog.CloseButton.GetPosition()
         self.Dialog.SetClientSize((self.Dialog.GetClientSize().x, y + 35))
         self.Dialog.ShowModal()
-
-    def OnEditScript(self, event):
-        script_path = self.FuncPanel.Tool.get_selected_script_path()
-        subprocess.call([self.ScriptEditorPath, script_path])
-
-    def OnOpenScript(self, event):
-        script_path = self.FuncPanel.Tool.get_selected_script_path()
-        path = os.path.dirname(script_path)
-        subprocess.call(['explorer', path])

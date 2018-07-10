@@ -11,45 +11,49 @@ __PRESETS__ = [
     {
         'name': '1단(작은크기)',
         'preset': {
-            'AutoBreaksValue': 4.0,
             'StaffSizeValue': 5.5,
             'StavesMarginValue': 10.0,
             'SystemsMarginValue': 25.0,
-            'InstrumentMarginValue': 2.0,
-            'InstrumentNamesShowValue': False,
+            'InstrumentMarginValue': 11.0,
+            'InstrumentStaffGapValue': 2.0,
+            'ShowInstrumentNamesValue': False,
+            'BreakEveryBarsValue': 4.0,
         }
     },
     {
         'name': '1단(보통크기)',
         'preset': {
-            'AutoBreaksValue': 4.0,
             'StaffSizeValue': 7.2,
             'StavesMarginValue': 10.0,
             'SystemsMarginValue': 25.0,
-            'InstrumentMarginValue': 2.0,
-            'InstrumentNamesShowValue': False,
+            'InstrumentMarginValue': 14.0,
+            'InstrumentStaffGapValue': 2.0,
+            'ShowInstrumentNamesValue': False,
+            'BreakEveryBarsValue': 4.0,
         }
     },
     {
         'name': '2단(작은크기)',
         'preset': {
-            'AutoBreaksValue': 4.0,
             'StaffSizeValue': 5.5,
             'StavesMarginValue': 10.0,
             'SystemsMarginValue': 25.0,
-            'InstrumentMarginValue': 3.0,
-            'InstrumentNamesShowValue': True,
+            'InstrumentMarginValue': 13.0,
+            'InstrumentStaffGapValue': 3.0,
+            'ShowInstrumentNamesValue': True,
+            'BreakEveryBarsValue': 4.0
         }
     },
     {
         'name': '2단(보통크기)',
         'preset': {
-            'AutoBreaksValue': 4.0,
             'StaffSizeValue': 7.2,
             'StavesMarginValue': 10.0,
             'SystemsMarginValue': 25.0,
-            'InstrumentMarginValue': 3.0,
-            'InstrumentNamesShowValue': True,
+            'InstrumentMarginValue': 15.0,
+            'InstrumentStaffGapValue': 3.0,
+            'ShowInstrumentNamesValue': True,
+            'BreakEveryBarsValue': 4.0
         }
     }
 ]
@@ -62,4 +66,4 @@ class MacroPreset():
             setattr(self, key, preset[key])
 
 
-PRESETS = [MacroPreset(preset) for preset in __PRESETS__]
+Presets = [MacroPreset(preset) for preset in __PRESETS__]

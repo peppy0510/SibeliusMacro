@@ -4,15 +4,15 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING .ISS SCRIPT FILES!
 
 [Setup]
-AppName=PyRenamer
-AppVerName=PyRenamer 0.1
-DefaultDirName={pf}\PyRenamer
-DefaultGroupName=PyRenamer
-UninstallDisplayIcon={app}\PyRenamer.exe
+AppName=SibeliusMacro
+AppVerName=SibeliusMacro 0.0.1
+DefaultDirName={pf}\SibeliusMacro
+DefaultGroupName=SibeliusMacro
+UninstallDisplayIcon={app}\SibeliusMacro.exe
 Compression=lzma2
 SolidCompression=yes
 OutputDir="dist"
-
+OutputBaseFilename=SibeliusMacro 0.0.1
 
 // SignTool=Standard $f
 
@@ -32,8 +32,9 @@ OutputDir="dist"
 ; Source: "dist\PyRenamer\MyProg.exe"; DestDir: "{app}"
 ; Source: "distribute\MyProg.chm"; DestDir: "{app}"
 ; Source: "distribute\Readme.txt"; DestDir: "{app}"; Flags: isreadme
-Source: "dist\PyRenamer\*"; DestDir: "{app}"; Flags: recursesubdirs
+; Source: "dist\SibeliusMacro\*"; DestDir: "{app}"; Flags: recursesubdirs
+Source: "dist\*"; DestDir: "{app}"; Flags: recursesubdirs
 
 [Icons]
-Name: "{group}\PyRenamer"; Filename: "{app}\PyRenamer.exe"
-Name: "{commondesktop}\PyRenamer"; Filename: "{app}\PyRenamer.exe"
+Name: "{group}\SibeliusMacro"; Filename: "{app}\SibeliusMacro.exe"
+Name: "{commondesktop}\SibeliusMacro"; Filename: "{app}\SibeliusMacro.exe"

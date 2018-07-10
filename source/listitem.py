@@ -18,4 +18,3 @@ class ObjectItem():
         self.filename = os.path.basename(path)
         self.directory = os.path.basename(os.path.dirname(path))
         self.basename = os.path.basename(path)
-        # self.name = os.path.splitext(os.path.basename(path))[0]

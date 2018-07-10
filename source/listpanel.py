@@ -14,8 +14,8 @@ import wx
 
 from ObjectListView import ColumnDefn
 from ObjectListView import ObjectListView
+from listitem import ObjectItem
 from mpath import mpath
-from objectitem import ObjectItem
 
 
 class FileDropTarget(wx.FileDropTarget):

@@ -3,3 +3,6 @@
 *.txt
 *.pyc
 *.pyo
+dist
+build
+testsets

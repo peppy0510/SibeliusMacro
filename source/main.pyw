@@ -7,59 +7,49 @@ email: peppy0510@hotmail.com
 '''
 
 
-import sys
+import os
 import wx
 
-from buttons import Buttons
-from io import TextIOWrapper
+from listpanel import ListPanel
 from menubar import MenuBar
-from objectlist import ListPanel
 from preference import AppPreference
 from statusbar import StatusBar
-
-sys.stdout = TextIOWrapper(sys.stdout.buffer, encoding='utf-8', errors='replace')
+from toolpanel import ToolPanel
 
 LOGGING = False
 VERSION = '0.1.1'
 AUTHOR_NAME = 'Taehong Kim'
 AUTHOR_EMAIL = 'peppy0510@hotmail.com'
+FRAME_MIN_SIZE = wx.Size(350, 795)
+FRAME_MIN_SIZE = wx.Size(186, 795)
+FRAME_MAX_SIZE = (-1, -1)
+FRAME_MAX_SIZE = FRAME_MIN_SIZE
+# wx.MINIMIZE_BOX | wx.MAXIMIZE_BOX | wx.SYSTEM_MENU
 
 
-class ToolPanel(wx.Panel):
-
-    def __init__(self, parent):
-        wx.Panel.__init__(self, parent=parent, style=wx.LC_REPORT | wx.BORDER_DEFAULT)
-        self.parent = parent
-        self.SetBackgroundColour((180, 180, 180))
-        self.BottomLine = wx.StaticLine(parent=self, size=(172, 1), style=wx.LI_HORIZONTAL)
-        self.Bind(wx.EVT_SIZE, self.OnSize)
-
-    def OnSize(self, event):
-        width, height = self.GetClientSize()
-        self.BottomLine.SetRect((-2, height - 1, width + 4, 1))
-
-
-class MainFrame(wx.Frame, Buttons, MenuBar, StatusBar):
+class MainFrame(wx.Frame, MenuBar, StatusBar):
 
     def __init__(self, parent=None):
         wx.Frame.__init__(self, parent, id=wx.ID_ANY,
-                          pos=wx.DefaultPosition, size=wx.Size(350, 733),
-                          style=wx.CLIP_CHILDREN | wx.FRAME_SHAPED | wx.MINIMIZE_BOX |
-                          wx.MAXIMIZE_BOX | wx.SYSTEM_MENU | wx.CLOSE_BOX | wx.CAPTION |
-                          wx.RESIZE_BORDER | wx.TAB_TRAVERSAL | wx.BORDER_DEFAULT)
+                          pos=wx.DefaultPosition, size=FRAME_MIN_SIZE,
+                          style=wx.CLIP_CHILDREN | wx.FRAME_SHAPED | wx.CLOSE_BOX | wx.CAPTION |
+                          wx.RESIZE_BORDER | wx.TAB_TRAVERSAL | wx.BORDER_DEFAULT | wx.STAY_ON_TOP)
 
         self.version = VERSION
         self.author_name = AUTHOR_NAME
         self.author_email = AUTHOR_EMAIL
         self.SetTitle('SibeliusMacro')
-        self.SetMinSize((350, 733))
-        self.SetMaxSize((-1, -1))
-        w, h = self.GetSize()
-        width, height = wx.GetDisplaySize()
+        self.SetMinSize(FRAME_MIN_SIZE)
+        self.SetMaxSize(FRAME_MAX_SIZE)
+
+        icon = wx.Icon()
+        icon.CopyFromBitmap(wx.Bitmap(os.path.join(os.path.dirname(
+            os.path.dirname(__file__)), 'assets', 'icon.ico'), wx.BITMAP_TYPE_ANY))
+        self.SetIcon(icon)
+
         self.ToolPanel = ToolPanel(self)
         self.ListPanel = ListPanel(self)
         self.InitializeMenuBar()
-        self.InitializeButtons()
         self.InitializeStatusBar()
         self.Bind(wx.EVT_CLOSE, self.OnClose)
         self.Bind(wx.EVT_SIZE, self.OnSize, self)
