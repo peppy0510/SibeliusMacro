@@ -115,6 +115,7 @@ class ToolPanel(wx.Panel, ToolHandler):
         pos = self.MakeButtonAndToggle(pos, 'Export SVG', dark=True)
         pos = self.MakeButtonAndToggle(pos, 'Save Project', dark=True)
         pos = self.InsertHLines(pos)
+        self.painted = False
         self.Bind(wx.EVT_PAINT, self.OnPaint)
 
     def OnSize(self, event):
@@ -258,6 +259,11 @@ class ToolPanel(wx.Panel, ToolHandler):
         return pos
 
     def OnPaint(self, event):
+        if self.painted:
+            return
+
+        self.painted = True
+
         width, height = self.GetClientSize()
         dc = wx.PaintDC(self)
         color = '#D0D0D0'

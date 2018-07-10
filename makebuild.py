@@ -40,8 +40,19 @@ class Build():
 
     @classmethod
     def makebuild(self):
+        # proc = subprocess.Popen('pyinstaller --uac-admin makebuild.spec', shell=True)
         proc = subprocess.Popen('pyinstaller makebuild.spec', shell=True)
         proc.communicate()
+
+        # uiautomationbin = os.path.join(os.environ['PATH'].split(';')[0], 'Lib\\site-packages\\uiautomation\\bin')
+        # for name in os.listdir(uiautomationbin):
+        #     print(name, '*' * 100)
+        #     shutil.copyfile(os.path.join(uiautomationbin, name),
+        #                     os.path.abspath(os.path.join('dist', name)))
+
+        os.mkdir(os.path.join('dist', 'assets'))
+        shutil.copyfile(os.path.join('assets', 'icon.ico'),
+                        os.path.join('dist', 'assets', 'icon.ico'))
 
     @classmethod
     def runtest(self):

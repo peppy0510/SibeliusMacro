@@ -6,13 +6,8 @@ author: Taehong Kim
 email: peppy0510@hotmail.com
 '''
 
-
+import base
 import os
-import sys
-
-sys.path.insert(0, os.path.basename(__name__))
-
-import base  # noqa
 
 
 class Undo(base.MacroBase):

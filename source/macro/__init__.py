@@ -58,6 +58,7 @@ class Sibelius():
         self.macros = self.targets_to_macros(targets)
         self.status = SibeliusStatus(len(self.macros))
 
+        # sibelius.layout.AutoBreaks(self.root, self.params)
         if len(self.root.controls) > 0:
             self.run()
 
@@ -128,7 +129,10 @@ class Sibelius():
 
 
 def test():
-    Sibelius(targets=['HidePanels', 'Invisibles'])
+    # sibelius.layout.AutoBreaks(self.root, self.params)
+    Sibelius(targets=['AutoBreaks'])
+    Sibelius(targets=['HidePageNumbers'])
+    # Sibelius(targets=['HidePanels', 'Invisibles'])
     # Sibelius(targets=[
     #     'HidePanels', 'Invisibles', 'SinglePagesVertically',
     #     'UnlockFormat', 'AutoBreaks', 'DocumentSetup',
@@ -139,4 +143,6 @@ def test():
 
 
 if __name__ == '__main__':
+    from io import TextIOWrapper
+    sys.stdout = TextIOWrapper(sys.stdout.buffer, encoding='utf-8', errors='replace')
     test()

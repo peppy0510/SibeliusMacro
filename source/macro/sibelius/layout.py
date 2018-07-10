@@ -7,12 +7,7 @@ email: peppy0510@hotmail.com
 '''
 
 
-import os
-import sys
-
-sys.path.insert(0, os.path.basename(__name__))
-
-import base  # noqa
+import base
 
 
 class UnlockFormat(base.MacroBase):
@@ -32,15 +27,14 @@ class AutoBreaks(base.MacroBase):
     name = 'Auto Breaks'
 
     def run(self):
-        # base.MacroBase.__init__(self, root)
         self.root.key.esc()
-        # self.root.key.send(['{CTRL}A'])
         self.root.selectall()
         self.root.key.menu(['{ALT}|L|AB'])
         modal = base.Control(self.root).get('WindowControl', name='Auto Breaks')
-        base.Control(modal).get('CheckBoxControl', name='Use auto system breaks').set_checkbox(True)
-        base.Control(modal).get('CheckBoxControl', name='Use multirests').set_checkbox(False)
-        base.Control(modal).get('CheckBoxControl', name='Use auto page breaks').set_checkbox(False)
+        # modal = base.Control(self.root).get('WindowControl', excludes=['Score'])
+        base.Control(modal).get('CheckBoxControl', includes=['Use auto system breaks']).set_checkbox(True)
+        base.Control(modal).get('CheckBoxControl', includes=['Use multirests']).set_checkbox(False)
+        base.Control(modal).get('CheckBoxControl', includes=['Use auto page breaks']).set_checkbox(False)
         modal.key.bulk(['{TAB}{SPACE}{TAB}%d' % (self.params.auto_breaks_bars)])
         modal.key.bulk(['{Enter}'])
         self.root.key.esc()
@@ -55,6 +49,7 @@ class StaffSpacing(base.MacroBase):
         self.root.key.esc()
         self.root.key.menu(['{ALT}|L|SE'])
         modal = base.Control(self.root).get('WindowControl', name='Engraving Rules')
+        # modal = base.Control(self.root).get('WindowControl', excludes=['Score'])
         modal.key.bulk([''.join([
             ('{TAB}{TAB}{TAB}%0.2f' % (self.params.staves_size)),
             ('{TAB}%0.2f' % (self.params.page_extra_spaces)) * 3,
@@ -69,7 +64,7 @@ class StaffSpacingOptimize(base.MacroBase):
 
     def run(self):
         self.root.key.esc()
-        self.root.key.send(['{CTRL}A'])
+        self.root.selectall()
         self.wait(150)
         self.root.key.menu(['{ALT}|L|RB'])
         self.root.key.menu(['{ALT}|L|RA'])
@@ -89,7 +84,8 @@ class DocumentSetup(base.MacroBase):
         self.root.key.bulk(['{CTRL}D'])
         # self.root.key.menu(['{ALT}|L|DS'])
         modal = base.Control(self.root).get('WindowControl', name='Document Setup')
-        base.Control(modal).get('CheckBoxControl', name='After first page:').set_checkbox(True)
+        # modal = base.Control(self.root).get('WindowControl', excludes=['Score'])
+        base.Control(modal).get('CheckBoxControl', includes=['After first page']).set_checkbox(True)
         modal.key.bulk([('{ALT}M{TAB}{HOME}') + ('{DOWN}' * 4)])
         modal.key.menu(['{ALT}O'])
         modal.key.bulk(['{TAB}{TAB}{TAB}%0.2f' % (self.params.staff_size)])

@@ -7,12 +7,7 @@ email: peppy0510@hotmail.com
 '''
 
 
-import os
-import sys
-
-sys.path.insert(0, os.path.basename(__name__))
-
-import base  # noqa
+import base
 
 
 class RemoveTitle(base.MacroBase):

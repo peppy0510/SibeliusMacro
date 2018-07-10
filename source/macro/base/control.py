@@ -63,6 +63,7 @@ class Control():
                 self.path = path
 
         for i, ctrl in enumerate(controls):
+            # print(ctrl.Name)
             include = True
             limited = limit is not None and len(response) >= limit
 
@@ -130,5 +131,6 @@ class Control():
 
     def selectall(self):
         self.key.send(['{CTRL}A'])
-        modal = Control(self.controls).get('WindowControl', name='there is nothing to select')
+        modal = Control(copy.copy(self.controls)).get(
+            'WindowControl', name='there is nothing to select')
         modal.key.bulk(['{Enter}'])

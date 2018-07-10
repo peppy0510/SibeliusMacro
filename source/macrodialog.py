@@ -159,8 +159,8 @@ class MacroDialog(wx.Dialog):
         # self.Bind(wx.EVT_LEAVE_WINDOW, self.OnMouseCursorMove)
         # self.Bind(wx.EVT_MOUSE_EVENTS, self.OnMouseCursorMove)
 
-        cursor = wx.Cursor(wx.CURSOR_NO_ENTRY)  # wx.CURSOR_ARROW
-        self.SetCursor(cursor)
+        # cursor = wx.Cursor(wx.CURSOR_NO_ENTRY)  # wx.CURSOR_ARROW
+        # self.SetCursor(cursor)
         self.ShowModal()
 
     # def OnMouseCursorMove(self, event=None):

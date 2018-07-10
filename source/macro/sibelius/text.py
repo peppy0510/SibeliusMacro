@@ -7,12 +7,9 @@ email: peppy0510@hotmail.com
 '''
 
 
-import os
-import sys
+import base
 
-sys.path.insert(0, os.path.basename(__name__))
-
-import base  # noqa
+import uiautomation
 
 
 class MeasureNumbers(base.MacroBase):
@@ -30,14 +27,17 @@ class HidePageNumbers(base.MacroBase):
 
     def run(self):
         self.root.key.esc()
-        self.root.key.send(['{CTRL}A'])
+        self.root.selectall()
         self.root.key.menu(['{ALT}|T|PN'])
         modal = base.Control(self.root).get('WindowControl', name='Page Number Change')
+        # modal = base.Control(self.root).get('WindowControl', excludes=['Score'])
         base.Control(modal).get('CheckBoxControl', includes=['New page number']).set_checkbox(True)
-        modal.key.bulk(['{TAB}{TAB}{HOME}{TAB}{END}{UP}{UP}{UP}{DOWN}{DOWN}'])
+        modal.key.bulk(['{TAB}{TAB}{HOME}{TAB}'])
+        modal.key.bulk(['{TAB}{END}{UP}{UP}{UP}{DOWN}{DOWN}'])
         modal.key.bulk(['{ENTER}'])
         modal = base.Control(self.root).get('WindowControl', includes=[
             'There is something selected which is not in view'])
+        # modal = base.Control(self.root).get('WindowControl', excludes=['Score'])
         modal.key.bulk(['Y'])
         self.root.key.esc()
 

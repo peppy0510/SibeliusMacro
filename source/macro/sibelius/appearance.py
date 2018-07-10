@@ -7,7 +7,7 @@ email: peppy0510@hotmail.com
 '''
 
 
-import base  # noqa
+import base
 
 
 class NoteSpace(base.MacroBase):
@@ -16,7 +16,7 @@ class NoteSpace(base.MacroBase):
 
     def run(self, event=None):
         self.root.key.esc()
-        self.root.key.send(['{CTRL}A'])
+        self.root.selectall()
         self.root.key.menu(['{ALT}|A|RN'])
         self.root.key.esc()
         # self.root.key.send(['{CTRL}{ALT}{Shift}N'], wait=200)
@@ -30,6 +30,7 @@ class InstrumentNames(base.MacroBase):
         self.root.key.esc()
         self.root.key.menu(['{ALT}|A|IE'])
         modal = base.Control(self.root).get('WindowControl', name='Engraving Rules')
+        # modal = base.Control(self.root).get('WindowControl', excludes=['Score'])
         modal.key.bulk([''.join([
             ('{TAB}' * 3),
             ('{HOME}' if self.params.show_instrument_name else '{END}'),

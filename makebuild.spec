@@ -12,6 +12,7 @@ import os
 
 
 debug = False
+upx = True
 onefile = True
 
 
@@ -30,14 +31,12 @@ class Path():
 def grapdatas(home, path, depth, mode, specs=None):
     datas = []
     for p in glob.glob(os.path.join(home, path, '*.*')):
-        print(p, '*' * 100)
         splpath = p.split(os.sep)
         if specs is None or splpath[-1] in specs:
             virpath = os.sep.join(splpath[-depth - 1:])
             datas += [(virpath, p, mode)]
-
-    for data in datas:
-        print(data)
+    # for data in datas:
+    #     print(data)
     return datas
 
 
@@ -53,22 +52,14 @@ a = Analysis([os.path.join('source', 'main.pyw')],
              pathex=[path.home, path.macro, path.assets, path.uiautomationbin],
              hiddenimports=['macro', 'macro.base', 'macro.sibelius'])
 
-# a.datas += ['assets\\icon.ico']
 a.datas += grapdatas(path.home, 'assets', 1, 'DATA', ['icon.ico'])
 
 pyz = PYZ(a.pure)
 
-print(path.home, path.icon)
-print('a.datas', '-' * 100)
-print(a.datas)
-print('a.zipfiles', '-' * 100)
-print(a.zipfiles)
-print('a.binaries', '-' * 100)
-print(a.binaries)
-
-# exe = EXE(pyz, a.scripts + [('O', '', 'OPTION')], a.binaries, a.zipfiles, a.datas,
-#           icon=path.icon, name=path.output, upx=True, strip=None, debug=debug, console=debug)
-
-exe = EXE(pyz, a.scripts, name=path.output, icon=path.icon,
-          upx=True, strip=None, debug=debug, console=debug, exclude_binaries=1)
-dist = COLLECT(exe, a.binaries, a.zipfiles, a.datas, upx=True, strip=None, name='SibeliusMacro')
+if onefile:
+    exe = EXE(pyz, a.scripts + [('O', '', 'OPTION')], a.binaries, a.zipfiles, a.datas,
+              icon=path.icon, name=path.output, upx=upx, strip=None, debug=debug, console=debug)
+else:
+    exe = EXE(pyz, a.scripts, name=path.output, icon=path.icon,
+              upx=upx, strip=None, debug=debug, console=debug, exclude_binaries=1)
+    dist = COLLECT(exe, a.binaries, a.zipfiles, a.datas, upx=upx, strip=None, name='SibeliusMacro')
