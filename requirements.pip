@@ -1,0 +1,7 @@
+pywin32
+wxpython
+pyinstaller
+uiautomation
+objectlistview
+git+ssh://gogs@east-control.com/pockestra/python-mstr.git
+git+ssh://gogs@east-control.com/pockestra/python-mpath.git

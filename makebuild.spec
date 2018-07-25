@@ -35,8 +35,6 @@ def grapdatas(home, path, depth, mode, specs=None):
         if specs is None or splpath[-1] in specs:
             virpath = os.sep.join(splpath[-depth - 1:])
             datas += [(virpath, p, mode)]
-    # for data in datas:
-    #     print(data)
     return datas
 
 
@@ -46,6 +44,7 @@ path = Path(home=os.path.abspath(''),
             macro=os.path.join('source', 'macro'),
             output=os.path.join('build', 'SibeliusMacro.exe'),
             uiautomationbin=os.path.join(os.environ['PATH'].split(';')[0], 'Lib\\site-packages\\uiautomation\\bin'))
+
 
 a = Analysis([os.path.join('source', 'main.pyw')],
              hookspath=[path.macro],

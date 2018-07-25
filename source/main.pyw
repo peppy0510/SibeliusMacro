@@ -8,6 +8,7 @@ email: peppy0510@hotmail.com
 
 
 import os
+import sys
 import wx
 
 from listpanel import ListPanel
