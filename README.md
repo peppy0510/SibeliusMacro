@@ -10,4 +10,6 @@ python -m pip install --upgrade pip
 pip install -r requirements.pip
 ```
 
+## Sibelius Version
 
+Works only with Sibelius 8.1.1.126

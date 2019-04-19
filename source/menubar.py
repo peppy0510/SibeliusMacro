@@ -14,8 +14,8 @@ class MenuBar():
 
     def InitializeMenuBar(self):
 
-        def make_menuitem(label, menu, bind=None):
-            item = wx.MenuItem(menu, wx.ID_ANY, label, wx.EmptyString, wx.ITEM_CHECK)
+        def make_menuitem(label, menu, bind=None, kind=wx.ITEM_NORMAL):
+            item = wx.MenuItem(menu, wx.ID_ANY, label, wx.EmptyString, kind=kind)
             menu.Append(item)
             if bind is not None:
                 self.Bind(wx.EVT_MENU, bind, item)
@@ -28,7 +28,8 @@ class MenuBar():
 
         MenuBar.Append(FileMenu, '&File')
         SettingsMenu = wx.Menu()
-        self.AlwaysOnTopMenuItem = make_menuitem('Always on top', SettingsMenu, self.ToolPanel.OnAlwaysOnTopToggle)
+        self.AlwaysOnTopMenuItem = make_menuitem(
+            'Always on top', SettingsMenu, self.ToolPanel.OnAlwaysOnTopToggle, kind=wx.ITEM_CHECK)
         # SettingsMenu.AppendSeparator()
         # self.AutoClearWhenImportMenuItem = make_menuitem('Auto clear when import', SettingsMenu, None)
         # self.AutoClearWhenImportMenuItem.Check(True)
@@ -60,6 +61,7 @@ class MenuBar():
         message = 'Email: %s' % (self.author_email)
         wx.StaticText(self.Dialog, label=message, pos=(margin, margin + 18 * 2))
 
+        # wx.BORDER_NONE
         self.Dialog.CloseButton = wx.Button(self.Dialog, label=u'Close')
         self.Dialog.CloseButton.SetRect((width - (78 + margin) * 1, margin + 60, 78, 24))
         self.Dialog.CloseButton.Bind(wx.EVT_BUTTON, lambda event: self.Dialog.Destroy())

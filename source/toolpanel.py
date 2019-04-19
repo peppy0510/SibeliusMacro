@@ -154,6 +154,7 @@ class ToolPanel(wx.Panel, ToolHandler):
         return pos
 
     def MakeButtonAndToggle(self, pos, label, targets=[], style=wx.BORDER_DEFAULT, dark=False):
+        # BORDER_DEFAULT|BORDER_NONE
         pos = self.MakeButton(pos, label, style=style, dark=dark)
 
         toggle = wx.CheckBox(self, pos=wx.Point(pos.x, pos.y + 6))
@@ -180,7 +181,26 @@ class ToolPanel(wx.Panel, ToolHandler):
         pos.x += offset
         spinctrl = wx.SpinCtrlDouble(
             self, value='', pos=wx.Point(pos.x, pos.y + 2), size=(60, 22),
-            style=wx.SP_ARROW_KEYS, min=min_value, max=max_value, inc=increment, initial=initial, name='wxSpinCtrl')
+            style=wx.SP_ARROW_KEYS, min=min_value, max=max_value,
+            inc=increment, initial=initial, name='wxSpinCtrl')
+        for children in spinctrl.GetChildren():
+            # if children.__class__.__name__ == 'TextCtrl':
+            #     # children.SetBackgroundColour(self.GetBackgroundColour())
+            #     # children.SetWindowStyle(wx.BORDER_DEFAULT)
+            #     # children.SetWindowStyleFlag(wx.BORDER_NONE)
+            #     # children.SetExtraStyle(wx.BORDER_NONE)
+            if children.__class__.__name__ == 'SpinButton':
+                children.SetBackgroundColour(self.GetBackgroundColour())
+                # children.SetThemeEnabled(False)
+                # for v in children.GetChildren():
+                #     print(v)
+                # style = v.GetWindowStyleFlag()
+                # style = children.GetExtraStyle()
+                # children.SetWindowStyleFlag(style | wx.BORDER_NONE)
+                # children.SetWindowStyle(wx.BORDER_NONE)
+                # children.SetWindowStyleFlag(wx.BORDER_NONE)
+                # children.SetExtraStyle(wx.BORDER_NONE)
+                # print([v for v in dir(children) if 'style' in v.lower()])
 
         attrname = label.replace(' ', '')
         setattr(self, attrname + 'Value', spinctrl)

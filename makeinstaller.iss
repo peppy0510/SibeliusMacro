@@ -1,38 +1,25 @@
-; -- Example1.iss --
-; Demonstrates copying 3 files and creating an icon.
-
-; SEE THE DOCUMENTATION FOR DETAILS ON CREATING .ISS SCRIPT FILES!
+; http://www.jrsoftware.org/ishelp/index.php
 
 [Setup]
-AppName=SibeliusMacro
-AppVerName=SibeliusMacro 0.0.1
-DefaultDirName={pf}\SibeliusMacro
-DefaultGroupName=SibeliusMacro
-UninstallDisplayIcon={app}\SibeliusMacro.exe
-Compression=lzma2
+AppName="SibeliusMacro"
+AppVerName="SibeliusMacro 0.2.0"
+DefaultDirName="{pf}\SibeliusMacro"
+DefaultGroupName="SibeliusMacro"
+AppVersion="0.2.0"
+AppCopyright="Taehong Kim"
+AppPublisher="Taehong Kim"
+UninstallDisplayIcon="{app}\SibeliusMacro.exe"
+Compression=lzma2/max
 SolidCompression=yes
 OutputDir="dist"
-OutputBaseFilename=SibeliusMacro 0.0.1
-
-// SignTool=Standard $f
-
-; SignTool=Standard $f
-; SignTool=Standard /d $qmacroboxplayer$q $f 
-; SignTool=Standard /d $qStonefield Query Installer$q $f
-; SignTool="C:\Program Files (x86)\Microsoft SDKs\Windows\v7.1A\Bin\signtool.exe" /x /y /d $qmacrobox.exe$q $f
-; Standard="C:\Program Files (x86)\Microsoft SDKs\Windows\v7.1A\Bin\signtool.exe"
-; "C:\Program Files\Inno Setup 5\iscc" "/sStandard=C:\Program Files\Microsoft Visual Studio 8\SDK\v2.0\Bin\signtool.exe sign /f CertPath\mycert.pfx /p MyPassword $p" sfquery.iss
-; mycustom=signtool.exe $p
-; byparam=$p
-; SignTool=mystandard
-; SignTool=mycustom /x /y /d $qMy Program$q $f
-; SignTool=byparam signtool.exe /x /y /d $qMy Program$q $f
+OutputBaseFilename="SibeliusMacro-0.2.0-Setup"
+; VersionInfoVersion="0.2.0"
+VersionInfoProductVersion="0.2.0"
+VersionInfoCompany="Taehong Kim"
+VersionInfoCopyright="Taehong Kim"
+ArchitecturesInstallIn64BitMode="x64"
 
 [Files]
-; Source: "dist\PyRenamer\MyProg.exe"; DestDir: "{app}"
-; Source: "distribute\MyProg.chm"; DestDir: "{app}"
-; Source: "distribute\Readme.txt"; DestDir: "{app}"; Flags: isreadme
-; Source: "dist\SibeliusMacro\*"; DestDir: "{app}"; Flags: recursesubdirs
 Source: "dist\*"; DestDir: "{app}"; Flags: recursesubdirs
 
 [Icons]

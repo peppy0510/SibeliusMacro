@@ -1,9 +1,12 @@
 # encoding: utf-8
 
 
-'''
-author: Taehong Kim
-email: peppy0510@hotmail.com
+__appname__ = 'SibeliusMacro'
+__version__ = '0.2.0'
+__author__ = 'Taehong Kim'
+__email__ = 'peppy0510@hotmail.com'
+__license__ = ''
+__doc__ = '''
 '''
 
 
@@ -16,11 +19,10 @@ from menubar import MenuBar
 from preference import AppPreference
 from statusbar import StatusBar
 from toolpanel import ToolPanel
+from wininstance import get_current_real_cwq
+from wininstance import kill_existing_instances
 
 LOGGING = False
-VERSION = '0.1.1'
-AUTHOR_NAME = 'Taehong Kim'
-AUTHOR_EMAIL = 'peppy0510@hotmail.com'
 FRAME_MIN_SIZE = wx.Size(350, 795)
 FRAME_MIN_SIZE = wx.Size(186, 795)
 FRAME_MAX_SIZE = (-1, -1)
@@ -30,22 +32,31 @@ FRAME_MAX_SIZE = FRAME_MIN_SIZE
 
 class MainFrame(wx.Frame, MenuBar, StatusBar):
 
+    icon_path = os.path.join('assets', 'icon', 'icon.ico')
+
     def __init__(self, parent=None):
         wx.Frame.__init__(self, parent, id=wx.ID_ANY,
                           pos=wx.DefaultPosition, size=FRAME_MIN_SIZE,
                           style=wx.CLIP_CHILDREN | wx.FRAME_SHAPED | wx.CLOSE_BOX | wx.CAPTION |
                           wx.RESIZE_BORDER | wx.TAB_TRAVERSAL | wx.BORDER_DEFAULT | wx.STAY_ON_TOP)
 
-        self.version = VERSION
-        self.author_name = AUTHOR_NAME
-        self.author_email = AUTHOR_EMAIL
-        self.SetTitle('SibeliusMacro')
+        self.version = __version__
+        self.author_name = __author__
+        self.author_email = __email__
+        self.SetTitle(__appname__)
         self.SetMinSize(FRAME_MIN_SIZE)
         self.SetMaxSize(FRAME_MAX_SIZE)
 
         icon = wx.Icon()
-        icon.CopyFromBitmap(wx.Bitmap(os.path.join(os.path.dirname(
-            os.path.dirname(__file__)), 'assets', 'icon.ico'), wx.BITMAP_TYPE_ANY))
+
+        if hasattr(sys, '_MEIPASS'):
+            self.icon_path = os.path.join(sys._MEIPASS, self.icon_path)
+        else:
+            cwd = os.path.dirname(get_current_real_cwq())
+            self.icon_path = os.path.join(cwd, self.icon_path)
+
+        # print(self.icon_path)
+        icon.CopyFromBitmap(wx.Bitmap(self.icon_path, wx.BITMAP_TYPE_ANY))
         self.SetIcon(icon)
 
         self.ToolPanel = ToolPanel(self)
@@ -96,4 +107,5 @@ def main():
 
 
 if __name__ == '__main__':
+    kill_existing_instances()
     main()
