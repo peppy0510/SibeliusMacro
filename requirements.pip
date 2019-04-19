@@ -3,5 +3,5 @@ wxpython
 pyinstaller
 uiautomation
 objectlistview
-git+ssh://gogs@east-control.com/pockestra/python-mstr.git
-git+ssh://gogs@east-control.com/pockestra/python-mpath.git
+git+ssh://git@github.com/peppy0510/python-mstr.git
+git+ssh://git@github.com/peppy0510/python-mpath.git
