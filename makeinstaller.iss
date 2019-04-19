@@ -2,19 +2,19 @@
 
 [Setup]
 AppName="SibeliusMacro"
-AppVerName="SibeliusMacro 0.2.0"
+AppVerName="SibeliusMacro 0.2.1"
 DefaultDirName="{pf}\SibeliusMacro"
 DefaultGroupName="SibeliusMacro"
-AppVersion="0.2.0"
+AppVersion="0.2.1"
 AppCopyright="Taehong Kim"
 AppPublisher="Taehong Kim"
 UninstallDisplayIcon="{app}\SibeliusMacro.exe"
 Compression=lzma2/max
 SolidCompression=yes
 OutputDir="dist"
-OutputBaseFilename="SibeliusMacro-0.2.0-Setup"
-; VersionInfoVersion="0.2.0"
-VersionInfoProductVersion="0.2.0"
+OutputBaseFilename="SibeliusMacro-0.2.1-Setup"
+; VersionInfoVersion="0.2.1"
+VersionInfoProductVersion="0.2.1"
 VersionInfoCompany="Taehong Kim"
 VersionInfoCopyright="Taehong Kim"
 ArchitecturesInstallIn64BitMode="x64"

@@ -2,7 +2,7 @@
 
 
 __appname__ = 'SibeliusMacro'
-__version__ = '0.2.0'
+__version__ = '0.2.1'
 __author__ = 'Taehong Kim'
 __email__ = 'peppy0510@hotmail.com'
 __license__ = ''
@@ -35,10 +35,11 @@ class MainFrame(wx.Frame, MenuBar, StatusBar):
     icon_path = os.path.join('assets', 'icon', 'icon.ico')
 
     def __init__(self, parent=None):
+        self.defaultStyle = wx.CLIP_CHILDREN | wx.FRAME_SHAPED | wx.CLOSE_BOX | \
+            wx.CAPTION | wx.RESIZE_BORDER | wx.TAB_TRAVERSAL | wx.BORDER_DEFAULT | wx.STAY_ON_TOP
         wx.Frame.__init__(self, parent, id=wx.ID_ANY,
                           pos=wx.DefaultPosition, size=FRAME_MIN_SIZE,
-                          style=wx.CLIP_CHILDREN | wx.FRAME_SHAPED | wx.CLOSE_BOX | wx.CAPTION |
-                          wx.RESIZE_BORDER | wx.TAB_TRAVERSAL | wx.BORDER_DEFAULT | wx.STAY_ON_TOP)
+                          style=self.defaultStyle)
 
         self.version = __version__
         self.author_name = __author__

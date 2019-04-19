@@ -27,14 +27,18 @@ class AlwaysOnTopToggleHandler():
     def SetAlwaysOnTopEnabled(self):
         self.parent.AlwaysOnTopMenuItem.Check(True)
         self.AlwaysOnTopToggle.SetValue(True)
-        style = self.parent.GetWindowStyle()
-        self.parent.SetWindowStyle(style | wx.STAY_ON_TOP)
+        # style = self.parent.GetWindowStyle()
+        # self.parent.SetWindowStyle(style | wx.STAY_ON_TOP)
+        self.parent.SetWindowStyle(self.parent.defaultStyle | wx.STAY_ON_TOP)
+        self.parent.Update()
 
     def SetAlwaysOnTopDisabled(self):
         self.parent.AlwaysOnTopMenuItem.Check(False)
         self.AlwaysOnTopToggle.SetValue(False)
-        style = self.parent.GetWindowStyle()
-        self.parent.SetWindowStyle(style ^ wx.STAY_ON_TOP)
+        # style = self.parent.GetWindowStyle()
+        # self.parent.SetWindowStyle(style ^ wx.STAY_ON_TOP)
+        self.parent.SetWindowStyle(self.parent.defaultStyle)
+        self.parent.Update()
 
 
 class SelectAllButtonHandler():
