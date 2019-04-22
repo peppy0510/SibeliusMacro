@@ -1,7 +1,7 @@
 
 ## Features
 
-* GUI tool for AVID Sibelius.
+* AVID Sibelius automation tool.
 
 ## Screenshot
 
