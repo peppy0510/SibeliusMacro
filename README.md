@@ -1,10 +1,7 @@
 
 ## Features
 
-* GUI tool to hide or show Windows folder.
-* Supports drag and drop.
-* Does not hide root directory, hide only contained directories and files.
-* Beautify log panel shows up working status.
+* GUI tool for AVID Sibelius.
 
 ## Screenshot
 
